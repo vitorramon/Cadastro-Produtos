@@ -2,7 +2,6 @@ package br.com.api.produtos.servico;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +23,8 @@ public class ProdutoServico {
         return pr.findAll();
     }
 
-    //Método para cadastrar produtos
-    public ResponseEntity<?> cadastrar(ProdutoModelo pm){
+    //Método para cadastrar ou alterar produtos
+    public ResponseEntity<?> cadastrarAlterar(ProdutoModelo pm, String acao){
 
         if(pm.getNome().equals("")){
             rm.setMensagem("O nome do Produto é obrigatório");
@@ -34,10 +33,25 @@ public class ProdutoServico {
             rm.setMensagem("O nome da marca é obrigatório");
             return new ResponseEntity<RespostaModelo>(rm, HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<ProdutoModelo>(pr.save(pm), HttpStatus.CREATED);
+           if(acao.equals("cadastrar")){
+             return new ResponseEntity<ProdutoModelo>(pr.save(pm), HttpStatus.CREATED);
+           } else {
+             return new ResponseEntity<ProdutoModelo>(pr.save(pm), HttpStatus.OK);
+           }
         }
 
     }
+
+    // Método para remover produtos
+
+    public ResponseEntity<RespostaModelo> remover(long codigo){
+        pr.deleteById(codigo);
+
+        rm.setMensagem("O produto foi removido com sucesso");
+        return new ResponseEntity<RespostaModelo>(rm, HttpStatus.OK);
+    }
+
+
 
     
 
